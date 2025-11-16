@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>แม่สูตรคูณ 1–1000 + Scientific Calculator (ธีม สมัยใหม่)</title>
+  <title>แม่สูตรคูณ 1–1000 + Scientific Calculator + แบบฝึกหัด (ธีม สมัยใหม่)</title>
   <style>
     /* Modern Theme: Clean & Minimal */
     :root{
@@ -16,9 +16,19 @@
       --radius: 16px;
       --shadow: 0 4px 12px rgba(0,0,0,0.05);
       --shadow-hover: 0 8px 24px rgba(0,0,0,0.08);
+      --correct: #10b981;
+      --incorrect: #ef4444;
+      --text-primary: #1e293b;
+      --text-secondary: #475569;
       font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
-    html,body{height:100%;margin:0;background:var(--bg);color:#1e293b}
+    html,body{
+      height:100%;
+      margin:0;
+      background:var(--bg);
+      color:var(--text-primary);
+      line-height: 1.6;
+    }
     header{
       background: linear-gradient(90deg, rgba(59,130,246,0.05), rgba(59,130,246,0.02));
       border-bottom: 1px solid rgba(59,130,246,0.06);
@@ -37,71 +47,433 @@
       display:flex; align-items:center; justify-content:center; font-weight:700; box-shadow:var(--shadow);
       font-size:20px;
     }
-    h1{font-size:18px;margin:0;color:var(--primary-700); font-weight:700}
-    .subtitle{font-size:14px; color:var(--muted); margin-top:2px}
-    .controls{margin-left:auto; display:flex; gap:12px; align-items:center;}
+    h1{
+      font-size:18px;
+      margin:0;
+      color:var(--primary-700); 
+      font-weight:700;
+      line-height: 1.3;
+    }
+    .subtitle{
+      font-size:14px; 
+      color:var(--text-secondary); 
+      margin-top:4px;
+      font-weight: 500;
+    }
+    .controls{
+      margin-left:auto; 
+      display:flex; 
+      gap:12px; 
+      align-items:center;
+    }
     .search{
-      display:flex; gap:8px; align-items:center; background:#fff; border-radius:12px; padding:8px 12px;
-      box-shadow:var(--shadow); border:1px solid rgba(0,0,0,0.04); transition: all 0.2s;
+      display:flex; 
+      gap:8px; 
+      align-items:center; 
+      background:#fff; 
+      border-radius:12px; 
+      padding:8px 12px;
+      box-shadow:var(--shadow); 
+      border:1px solid rgba(0,0,0,0.04); 
+      transition: all 0.2s;
     }
     .search:focus-within{
       box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
     }
     input[type="text"]{
-      border:0; outline:none; font-size:14px; width:200px; background:transparent;
+      border:0; 
+      outline:none; 
+      font-size:14px; 
+      width:200px; 
+      background:transparent;
+      color: var(--text-primary);
+    }
+    input[type="text"]::placeholder{
+      color: var(--muted);
     }
     button{
-      background:var(--primary); color:white; border:0; padding:10px 16px; border-radius:10px; cursor:pointer;
-      font-weight:600; transition: all 0.2s; box-shadow: var(--shadow);
+      background:var(--primary); 
+      color:white; 
+      border:0; 
+      padding:10px 16px; 
+      border-radius:10px; 
+      cursor:pointer;
+      font-weight:600; 
+      transition: all 0.2s; 
+      box-shadow: var(--shadow);
+      font-size: 14px;
     }
     button:hover{
-      background:var(--primary-700); transform: translateY(-1px); box-shadow: var(--shadow-hover);
+      background:var(--primary-700); 
+      transform: translateY(-1px); 
+      box-shadow: var(--shadow-hover);
     }
-    button.ghost{background:transparent; color:var(--primary); border:1px solid rgba(59,130,246,0.12)}
-    button.ghost:hover{background:rgba(59,130,246,0.06); transform: translateY(-1px);}
-    main{padding:24px; max-width:1200px; margin:0 auto;}
-    .meta{display:flex; gap:16px; align-items:center; margin-bottom:20px; flex-wrap:wrap;}
+    button.ghost{
+      background:transparent; 
+      color:var(--primary); 
+      border:1px solid rgba(59,130,246,0.12);
+      font-weight: 600;
+    }
+    button.ghost:hover{
+      background:rgba(59,130,246,0.06); 
+      transform: translateY(-1px);
+    }
+    main{
+      padding:24px; 
+      max-width:1200px; 
+      margin:0 auto;
+    }
+    .meta{
+      display:flex; 
+      gap:16px; 
+      align-items:center; 
+      margin-bottom:20px; 
+      flex-wrap:wrap;
+    }
     .info{
-      background:var(--card-bg); padding:12px 16px; border-radius:12px; display:flex; gap:8px; align-items:center;
-      box-shadow:var(--shadow); font-size:14px;
+      background:var(--card-bg); 
+      padding:12px 16px; 
+      border-radius:12px; 
+      display:flex; 
+      gap:8px; 
+      align-items:center;
+      box-shadow:var(--shadow); 
+      font-size:14px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .info strong{
+      color: var(--text-primary);
+      font-weight: 700;
     }
 
     /* grid of cards */
-    .grid{display:grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap:20px;}
+    .grid{
+      display:grid; 
+      grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); 
+      gap:20px;
+    }
     .card{
-      background: white; border-radius:var(--radius); box-shadow:var(--shadow); padding:16px; 
-      border:1px solid rgba(0,0,0,0.03); transition: all 0.3s; display:flex; flex-direction:column; gap:12px;
+      background: white; 
+      border-radius:var(--radius); 
+      box-shadow:var(--shadow); 
+      padding:16px; 
+      border:1px solid rgba(0,0,0,0.03); 
+      transition: all 0.3s; 
+      display:flex; 
+      flex-direction:column; 
+      gap:12px;
     }
     .card:hover{
-      transform: translateY(-4px); box-shadow: var(--shadow-hover);
+      transform: translateY(-4px); 
+      box-shadow: var(--shadow-hover);
     }
-    .card h3{margin:0; display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:16px; color:var(--primary-700)}
-    .card .rows{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; font-size:14px; color:#334155; line-height:1.5}
-    .muted{color:var(--muted); font-size:14px}
+    .card h3{
+      margin:0; 
+      display:flex; 
+      justify-content:space-between; 
+      align-items:center; 
+      gap:8px; 
+      font-size:16px; 
+      color:var(--primary-700);
+      font-weight: 700;
+    }
+    .card .rows{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; 
+      font-size:14px; 
+      color:var(--text-primary); 
+      line-height:1.5;
+      font-weight: 500;
+    }
+    .muted{
+      color:var(--muted); 
+      font-size:14px;
+      font-weight: 500;
+    }
 
     /* pagination */
-    .pager{display:flex; gap:8px; justify-content:center; margin:24px 0; align-items:center;}
-    .page-btn{background:transparent; border:1px solid rgba(0,0,0,0.08); padding:8px 12px; border-radius:8px; cursor:pointer; transition: all 0.2s}
-    .page-btn:hover{background:rgba(59,130,246,0.06); border-color:rgba(59,130,246,0.2)}
-    .page-btn.active{background:var(--primary); color:white; border-color:var(--primary)}
+    .pager{
+      display:flex; 
+      gap:8px; 
+      justify-content:center; 
+      margin:24px 0; 
+      align-items:center;
+    }
+    .page-btn{
+      background:transparent; 
+      border:1px solid rgba(0,0,0,0.08); 
+      padding:8px 12px; 
+      border-radius:8px; 
+      cursor:pointer; 
+      transition: all 0.2s;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+    .page-btn:hover{
+      background:rgba(59,130,246,0.06); 
+      border-color:rgba(59,130,246,0.2);
+    }
+    .page-btn.active{
+      background:var(--primary); 
+      color:white; 
+      border-color:var(--primary);
+      font-weight: 600;
+    }
 
     /* calculator popup */
-    .calc-toggle {display:flex; gap:8px; align-items:center}
-    .calculator{
-      position:fixed; right:24px; bottom:24px; width:340px; max-width:calc(100% - 48px);
-      background:linear-gradient(180deg, #fff, #fff); border-radius:16px; box-shadow:0 20px 40px rgba(0,0,0,0.15);
-      border:1px solid rgba(0,0,0,0.06); z-index:9999; user-select:none; overflow:hidden;
+    .calc-toggle {
+      display:flex; 
+      gap:8px; 
+      align-items:center;
     }
-    .calc-header{padding:12px 16px; display:flex; justify-content:space-between; align-items:center; cursor:grab; background:var(--primary); color:white}
-    .calc-body{padding:16px}
-    .calc-screen{background:var(--glass); padding:12px; border-radius:10px; min-height:52px; display:flex; flex-direction:column; justify-content:center; font-size:20px; text-align:right; font-family:monospace; margin-bottom:12px}
-    .calc-row{display:flex; gap:10px; margin-top:10px}
-    .btn{flex:1; padding:12px; border-radius:10px; border:0; background:#f1f5f9; cursor:pointer; font-weight:600; transition: all 0.2s}
-    .btn:hover{background:#e2e8f0; transform: scale(1.02)}
-    .btn.op{background:var(--primary); color:white}
-    .btn.op:hover{background:var(--primary-700)}
-    .toggle-mode{background:transparent; border:1px solid rgba(255,255,255,0.3); padding:6px 10px; border-radius:8px; cursor:pointer; color:white; transition: all 0.2s}
-    .toggle-mode:hover{background:rgba(255,255,255,0.1)}
+    .calculator{
+      position:fixed; 
+      right:24px; 
+      bottom:24px; 
+      width:340px; 
+      max-width:calc(100% - 48px);
+      background:linear-gradient(180deg, #fff, #fff); 
+      border-radius:16px; 
+      box-shadow:0 20px 40px rgba(0,0,0,0.15);
+      border:1px solid rgba(0,0,0,0.06); 
+      z-index:9999; 
+      user-select:none; 
+      overflow:hidden;
+    }
+    .calc-header{
+      padding:12px 16px; 
+      display:flex; 
+      justify-content:space-between; 
+      align-items:center; 
+      cursor:grab; 
+      background:var(--primary); 
+      color:white;
+    }
+    .calc-body{
+      padding:16px;
+    }
+    .calc-screen{
+      background:var(--glass); 
+      padding:12px; 
+      border-radius:10px; 
+      min-height:52px; 
+      display:flex; 
+      flex-direction:column; 
+      justify-content:center; 
+      font-size:20px; 
+      text-align:right; 
+      font-family:monospace; 
+      margin-bottom:12px;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .calc-row{
+      display:flex; 
+      gap:10px; 
+      margin-top:10px;
+    }
+    .btn{
+      flex:1; 
+      padding:12px; 
+      border-radius:10px; 
+      border:0; 
+      background:#f1f5f9; 
+      cursor:pointer; 
+      font-weight:600; 
+      transition: all 0.2s;
+      color: var(--text-primary);
+      font-size: 16px;
+    }
+    .btn:hover{
+      background:#e2e8f0; 
+      transform: scale(1.02);
+    }
+    .btn.op{
+      background:var(--primary); 
+      color:white;
+      font-weight: 700;
+    }
+    .btn.op:hover{
+      background:var(--primary-700);
+    }
+    .toggle-mode{
+      background:transparent; 
+      border:1px solid rgba(255,255,255,0.3); 
+      padding:6px 10px; 
+      border-radius:8px; 
+      cursor:pointer; 
+      color:white; 
+      transition: all 0.2s;
+      font-weight: 600;
+    }
+    .toggle-mode:hover{
+      background:rgba(255,255,255,0.1);
+    }
+
+    /* Practice Section */
+    .tabs{
+      display:flex; 
+      gap:8px; 
+      margin-bottom:24px; 
+      border-bottom:1px solid rgba(0,0,0,0.06); 
+      padding-bottom:8px;
+    }
+    .tab{
+      background:transparent; 
+      border:0; 
+      padding:10px 16px; 
+      border-radius:8px; 
+      cursor:pointer; 
+      transition: all 0.2s; 
+      font-weight:600;
+      color: var(--text-secondary);
+      font-size: 15px;
+    }
+    .tab:hover{
+      background:rgba(59,130,246,0.06);
+    }
+    .tab.active{
+      background:var(--primary); 
+      color:white;
+    }
+    
+    .practice-container{
+      max-width:600px; 
+      margin:0 auto; 
+      display:none;
+    }
+    .practice-container.active{
+      display:block;
+    }
+    
+    .practice-card{
+      background:white; 
+      border-radius:var(--radius); 
+      box-shadow:var(--shadow); 
+      padding:24px;
+      margin-bottom:20px; 
+      text-align:center;
+    }
+    .question{
+      font-size:32px; 
+      font-weight:700; 
+      margin:20px 0; 
+      color:var(--primary-700);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+      line-height: 1.3;
+    }
+    .answer-input{
+      width:120px; 
+      padding:12px 16px; 
+      font-size:20px; 
+      text-align:center; 
+      border-radius:10px;
+      border:2px solid rgba(0,0,0,0.1); 
+      margin:0 8px; 
+      transition: all 0.2s; 
+      font-weight:600;
+      color: var(--text-primary);
+    }
+    .answer-input:focus{
+      border-color:var(--primary); 
+      box-shadow:0 0 0 3px rgba(59,130,246,0.2); 
+      outline:none;
+    }
+    .answer-input.correct{
+      border-color:var(--correct); 
+      background-color:rgba(16,185,129,0.05);
+    }
+    .answer-input.incorrect{
+      border-color:var(--incorrect); 
+      background-color:rgba(239,68,68,0.05);
+    }
+    
+    .feedback{
+      margin-top:16px; 
+      padding:12px; 
+      border-radius:8px; 
+      font-weight:600; 
+      display:none;
+      font-size: 16px;
+    }
+    .feedback.correct{
+      background:rgba(16,185,129,0.1); 
+      color:var(--correct); 
+      display:block;
+    }
+    .feedback.incorrect{
+      background:rgba(239,68,68,0.1); 
+      color:var(--incorrect); 
+      display:block;
+    }
+    
+    .stats{
+      display:flex; 
+      justify-content:space-between; 
+      margin-top:16px; 
+      padding-top:16px;
+      border-top:1px solid rgba(0,0,0,0.06); 
+      font-size:14px;
+    }
+    .stat-item{
+      display:flex; 
+      flex-direction:column; 
+      align-items:center;
+    }
+    .stat-label{
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .stat-value{
+      font-size:20px; 
+      font-weight:700; 
+      color:var(--primary);
+    }
+    
+    .difficulty-selector{
+      display:flex; 
+      gap:8px; 
+      margin-bottom:20px; 
+      justify-content:center;
+    }
+    .difficulty-btn{
+      padding:8px 16px; 
+      border-radius:8px; 
+      border:1px solid rgba(0,0,0,0.1); 
+      background:white;
+      cursor:pointer; 
+      transition: all 0.2s; 
+      font-weight:600;
+      color: var(--text-primary);
+      font-size: 14px;
+    }
+    .difficulty-btn.active{
+      color:white; 
+      border-color:var(--primary);
+    }
+    .difficulty-btn.easy.active{
+      background:var(--correct);
+    }
+    .difficulty-btn.medium.active{
+      background:var(--primary);
+    }
+    .difficulty-btn.hard.active{
+      background:var(--incorrect);
+    }
+    
+    .progress-bar{
+      height:8px; 
+      background:rgba(0,0,0,0.06); 
+      border-radius:4px; 
+      margin:20px 0; 
+      overflow:hidden;
+    }
+    .progress-fill{
+      height:100%; 
+      background:var(--primary); 
+      transition: width 0.3s;
+    }
 
     /* small / responsive tweaks */
     @media (max-width:768px){
@@ -111,10 +483,32 @@
       .brand h1{font-size:16px}
       header{padding:14px 16px;}
       main{padding:16px;}
+      .question{font-size:24px}
+      .stats{
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .stat-item{
+        flex: 1;
+        min-width: 45%;
+      }
     }
 
-    footer{padding:24px; text-align:center; color:var(--muted); font-size:14px; background:var(--card-bg); margin-top:40px; border-radius:16px; box-shadow:var(--shadow)}
-    a{color:var(--primary)}
+    footer{
+      padding:24px; 
+      text-align:center; 
+      color:var(--muted); 
+      font-size:14px; 
+      background:var(--card-bg); 
+      margin-top:40px; 
+      border-radius:16px; 
+      box-shadow:var(--shadow);
+      font-weight: 500;
+    }
+    a{
+      color:var(--primary);
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -123,7 +517,7 @@
       <div class="logo">×</div>
       <div>
         <h1>แม่สูตรคูณ 1–1000</h1>
-        <div class="subtitle">ค้นหาและแสดงผลแม่สูตรคูณ พร้อมเครื่องคิดเลขวิทยาศาสตร์</div>
+        <div class="subtitle">ค้นหาและแสดงผลแม่สูตรคูณ พร้อมเครื่องคิดเลขวิทยาศาสตร์และแบบฝึกหัด</div>
       </div>
     </div>
 
@@ -139,25 +533,77 @@
   </header>
 
   <main>
-    <div class="meta">
-      <div class="info">ปัจจุบัน: <strong id="totalCount">1000</strong> แม่</div>
-      <div class="info">แสดงต่อหน้า:
-        <select id="perPageSelect" aria-label="จำนวนการ์ดต่อหน้า">
-          <option>12</option>
-          <option selected>24</option>
-          <option>36</option>
-          <option>48</option>
-        </select>
-      </div>
-      <div class="info muted">พิมพ์ "all" เพื่อแสดงทั้งหมด</div>
+    <div class="tabs">
+      <button class="tab active" data-tab="tables">ตารางสูตรคูณ</button>
+      <button class="tab" data-tab="practice">แบบฝึกหัด</button>
     </div>
 
-    <section id="results" class="grid" aria-live="polite"></section>
+    <!-- Tables Section -->
+    <section id="tables-section" class="tab-content active">
+      <div class="meta">
+        <div class="info">ปัจจุบัน: <strong id="totalCount">1000</strong> แม่</div>
+        <div class="info">แสดงต่อหน้า:
+          <select id="perPageSelect" aria-label="จำนวนการ์ดต่อหน้า">
+            <option>12</option>
+            <option selected>24</option>
+            <option>36</option>
+            <option>48</option>
+          </select>
+        </div>
+        <div class="info muted">พิมพ์ "all" เพื่อแสดงทั้งหมด</div>
+      </div>
 
-    <div class="pager" id="pager" role="navigation" aria-label="pagination"></div>
+      <section id="results" class="grid" aria-live="polite"></section>
+
+      <div class="pager" id="pager" role="navigation" aria-label="pagination"></div>
+    </section>
+
+    <!-- Practice Section -->
+    <section id="practice-section" class="practice-container">
+      <div class="difficulty-selector">
+        <button class="difficulty-btn easy active" data-difficulty="easy">ง่าย (1-10)</button>
+        <button class="difficulty-btn medium" data-difficulty="medium">ปานกลาง (1-20)</button>
+        <button class="difficulty-btn hard" data-difficulty="hard">ยาก (1-100)</button>
+      </div>
+
+      <div class="practice-card">
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 0%"></div>
+        </div>
+        
+        <div class="question" id="question">5 × 7 = ?</div>
+        
+        <div>
+          <input type="number" class="answer-input" id="answerInput" placeholder="คำตอบ">
+          <button id="checkAnswerBtn" class="btn op">ตรวจคำตอบ</button>
+          <button id="nextQuestionBtn" class="btn" style="display:none">ข้อต่อไป</button>
+        </div>
+        
+        <div class="feedback" id="feedback"></div>
+        
+        <div class="stats">
+          <div class="stat-item">
+            <div class="stat-label">คะแนน</div>
+            <div class="stat-value" id="score">0</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">ถูก</div>
+            <div class="stat-value" id="correctCount">0</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">ผิด</div>
+            <div class="stat-value" id="incorrectCount">0</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">ข้อที่</div>
+            <div class="stat-value" id="questionNumber">1/10</div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <footer>
-      ****
+      แม่สูตรคูณ 1-1000 พร้อมแบบฝึกหัดและเครื่องคิดเลขวิทยาศาสตร์
     </footer>
   </main>
 
@@ -165,7 +611,7 @@
   <div id="calculator" class="calculator" style="display:none;" role="dialog" aria-label="เครื่องคิดเลขวิทยาศาสตร์">
     <div class="calc-header" id="calcHeader">
       <div style="display:flex; gap:10px; align-items:center;">
-        <strong>เครื่องคิดเลขวิทยาศาสตร์</strong>
+        <strong style="font-size: 16px;">เครื่องคิดเลขวิทยาศาสตร์</strong>
       </div>
       <div style="display:flex; gap:8px; align-items:center;">
         <button id="toggleMode" class="toggle-mode">Scientific</button>
@@ -175,7 +621,7 @@
     <div class="calc-body">
       <div id="screen" class="calc-screen" tabindex="0" aria-live="polite">0</div>
       <div style="margin-top:8px">
-        <input id="exprInput" type="text" placeholder="พิมพ์นิพจน์ เช่น 2^10, sin(30), sqrt(25)" style="width:100%; padding:10px; border-radius:10px; border:1px solid rgba(0,0,0,0.08); font-size:14px" />
+        <input id="exprInput" type="text" placeholder="พิมพ์นิพจน์ เช่น 2^10, sin(30), sqrt(25)" style="width:100%; padding:10px; border-radius:10px; border:1px solid rgba(0,0,0,0.08); font-size:14px; color: var(--text-primary);" />
       </div>
       <div id="buttonsArea" style="margin-top:12px;">
         <!-- buttons are created by JS for flexibility -->
@@ -190,6 +636,7 @@
    - Search supports single number or range '10-15'
    - Pagination / per-page
    - Calculator popup (draggable) with safe evaluation
+   - Practice system with difficulty levels
    ============================================================ */
 
 (() => {
@@ -337,6 +784,221 @@
 
   // initial render (first page)
   renderPage(1);
+
+  /* ============================================================
+     TAB SWITCHING
+     ============================================================ */
+  const tabs = document.querySelectorAll('.tab');
+  const tablesSection = document.getElementById('tables-section');
+  const practiceSection = document.getElementById('practice-section');
+  
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Remove active class from all tabs and sections
+      tabs.forEach(t => t.classList.remove('active'));
+      tablesSection.classList.remove('active');
+      practiceSection.classList.remove('active');
+      
+      // Add active class to clicked tab and corresponding section
+      tab.classList.add('active');
+      if (tab.dataset.tab === 'tables') {
+        tablesSection.classList.add('active');
+      } else if (tab.dataset.tab === 'practice') {
+        practiceSection.classList.add('active');
+        // Initialize practice if not already done
+        if (!practiceInitialized) {
+          initPractice();
+          practiceInitialized = true;
+        }
+      }
+    });
+  });
+
+  /* ============================================================
+     PRACTICE SYSTEM
+     ============================================================ */
+  let practiceInitialized = false;
+  let currentDifficulty = 'easy';
+  let currentQuestion = null;
+  let score = 0;
+  let correctCount = 0;
+  let incorrectCount = 0;
+  let questionNumber = 1;
+  const totalQuestions = 10;
+  
+  // DOM elements for practice
+  const questionEl = document.getElementById('question');
+  const answerInput = document.getElementById('answerInput');
+  const checkAnswerBtn = document.getElementById('checkAnswerBtn');
+  const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+  const feedbackEl = document.getElementById('feedback');
+  const scoreEl = document.getElementById('score');
+  const correctCountEl = document.getElementById('correctCount');
+  const incorrectCountEl = document.getElementById('incorrectCount');
+  const questionNumberEl = document.getElementById('questionNumber');
+  const progressFill = document.querySelector('.progress-fill');
+  const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+  
+  // Difficulty ranges
+  const difficultyRanges = {
+    easy: { min: 1, max: 10 },
+    medium: { min: 1, max: 20 },
+    hard: { min: 1, max: 100 }
+  };
+  
+  function initPractice() {
+    // Set up difficulty buttons
+    difficultyBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        difficultyBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentDifficulty = btn.dataset.difficulty;
+        resetPractice();
+        generateQuestion();
+      });
+    });
+    
+    // Set up answer checking
+    checkAnswerBtn.addEventListener('click', checkAnswer);
+    
+    // Set up next question
+    nextQuestionBtn.addEventListener('click', nextQuestion);
+    
+    // Allow Enter key to check answer
+    answerInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        if (nextQuestionBtn.style.display === 'none') {
+          checkAnswer();
+        } else {
+          nextQuestion();
+        }
+      }
+    });
+    
+    // Generate first question
+    generateQuestion();
+    updateStats();
+  }
+  
+  function generateQuestion() {
+    const range = difficultyRanges[currentDifficulty];
+    const num1 = Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
+    const num2 = Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
+    
+    currentQuestion = {
+      num1: num1,
+      num2: num2,
+      answer: num1 * num2
+    };
+    
+    questionEl.textContent = `${num1} × ${num2} = ?`;
+    answerInput.value = '';
+    answerInput.className = 'answer-input';
+    feedbackEl.className = 'feedback';
+    checkAnswerBtn.style.display = 'block';
+    nextQuestionBtn.style.display = 'none';
+    answerInput.focus();
+    
+    updateProgress();
+  }
+  
+  function checkAnswer() {
+    const userAnswer = parseInt(answerInput.value);
+    
+    if (isNaN(userAnswer)) {
+      feedbackEl.textContent = 'กรุณาใส่คำตอบเป็นตัวเลข';
+      feedbackEl.className = 'feedback incorrect';
+      return;
+    }
+    
+    if (userAnswer === currentQuestion.answer) {
+      // Correct answer
+      answerInput.className = 'answer-input correct';
+      feedbackEl.textContent = 'ถูกต้อง! เยี่ยมมาก!';
+      feedbackEl.className = 'feedback correct';
+      score += 10;
+      correctCount++;
+    } else {
+      // Incorrect answer
+      answerInput.className = 'answer-input incorrect';
+      feedbackEl.textContent = `ไม่ถูกต้อง! คำตอบที่ถูกต้องคือ ${currentQuestion.answer}`;
+      feedbackEl.className = 'feedback incorrect';
+      incorrectCount++;
+    }
+    
+    checkAnswerBtn.style.display = 'none';
+    nextQuestionBtn.style.display = 'block';
+    nextQuestionBtn.focus();
+    
+    updateStats();
+  }
+  
+  function nextQuestion() {
+    questionNumber++;
+    
+    if (questionNumber > totalQuestions) {
+      // Practice session completed
+      showResults();
+    } else {
+      generateQuestion();
+      updateStats();
+    }
+  }
+  
+  function updateStats() {
+    scoreEl.textContent = score;
+    correctCountEl.textContent = correctCount;
+    incorrectCountEl.textContent = incorrectCount;
+    questionNumberEl.textContent = `${questionNumber}/${totalQuestions}`;
+  }
+  
+  function updateProgress() {
+    const progress = ((questionNumber - 1) / totalQuestions) * 100;
+    progressFill.style.width = `${progress}%`;
+  }
+  
+  function showResults() {
+    const percentage = Math.round((correctCount / totalQuestions) * 100);
+    
+    questionEl.innerHTML = `แบบฝึกหัดเสร็จสิ้น!<br><small>คุณได้ ${score} คะแนน</small>`;
+    answerInput.style.display = 'none';
+    checkAnswerBtn.style.display = 'none';
+    nextQuestionBtn.textContent = 'เริ่มใหม่';
+    nextQuestionBtn.style.display = 'block';
+    
+    if (percentage >= 80) {
+      feedbackEl.textContent = `ยอดเยี่ยม! คุณตอบถูก ${correctCount} จาก ${totalQuestions} ข้อ (${percentage}%)`;
+      feedbackEl.className = 'feedback correct';
+    } else if (percentage >= 60) {
+      feedbackEl.textContent = `ดีมาก! คุณตอบถูก ${correctCount} จาก ${totalQuestions} ข้อ (${percentage}%)`;
+      feedbackEl.className = 'feedback correct';
+    } else {
+      feedbackEl.textContent = `พยายามอีกนิด! คุณตอบถูก ${correctCount} จาก ${totalQuestions} ข้อ (${percentage}%)`;
+      feedbackEl.className = 'feedback incorrect';
+    }
+    
+    // Update progress to 100%
+    progressFill.style.width = '100%';
+    
+    // Change next button to restart
+    nextQuestionBtn.removeEventListener('click', nextQuestion);
+    nextQuestionBtn.addEventListener('click', resetPractice);
+  }
+  
+  function resetPractice() {
+    score = 0;
+    correctCount = 0;
+    incorrectCount = 0;
+    questionNumber = 1;
+    
+    answerInput.style.display = 'inline-block';
+    nextQuestionBtn.textContent = 'ข้อต่อไป';
+    nextQuestionBtn.removeEventListener('click', resetPractice);
+    nextQuestionBtn.addEventListener('click', nextQuestion);
+    
+    generateQuestion();
+    updateStats();
+  }
 
   /* ============================================================
      CALCULATOR: popup, draggable, safe evaluation
